@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="key" format="json">
+      <types:shape format="weave" example="key.json"><![CDATA[%dw 2.0
+
+type key = {|
+  binaryValue: String, 
+  keyId: String, 
+  valueType: String
+|} {"example": "{\\\"binaryValue\\\":\\\"++Kn0AIB5+z4uQQBgjL8rNmhAQHn7Pi5BGFwcGxpY2F0aW9uL2phdmE7IGNoYXJzZXQ9VVRGLbgAAAAAAAAAAQ==\\\",\\\"keyId\\\":\\\"1\\\",\\\"valueType\\\":\\\"BINARY\\\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+</types:mule>

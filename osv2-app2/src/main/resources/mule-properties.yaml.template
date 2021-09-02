@@ -1,0 +1,9 @@
+osv2:
+  base_url: ""
+  client_id: ""
+  client_secret: ""
+org_id: ""
+env_id: ""
+
+tls:
+  password: ""

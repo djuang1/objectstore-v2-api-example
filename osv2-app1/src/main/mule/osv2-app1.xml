@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f5d3035e-6036-4acd-ac76-c82049dedf67" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="store-key-value" doc:id="992532f1-c328-4f21-b741-7a43fdca1078" >
+		<http:listener doc:name="/store" doc:id="6039ddf6-fcc0-41d7-adfd-7c7b3df3e206" config-ref="HTTP_Listener_config" path="/store"/>
+		<os:store doc:name="Store" doc:id="2761fedb-8431-4ff4-951e-39211df90080" key="#[attributes.queryParams.key]" failOnNullValue="false">
+			<os:value ><![CDATA[#[attributes.queryParams.value]]]></os:value>
+		</os:store>
+		<ee:transform doc:name="Transform Message" doc:id="fbda2059-2617-4329-a010-893069a5c78f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	key: attributes.queryParams.key,
+	value: attributes.queryParams.value
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="get-all-key-values" doc:id="7b50a97a-4a26-4f32-86bd-ab1fadc0bc4f" >
+		<http:listener doc:name="/get" doc:id="00e2c3e5-2868-4865-be20-196993b7f0a9" config-ref="HTTP_Listener_config" path="/get"/>
+		<os:retrieve-all doc:name="Retrieve all" doc:id="f8bded56-b7a1-4710-a14a-d8b9659a85dc" />
+		<ee:transform doc:name="Transform Message" doc:id="d3fa0f86-928b-453e-8b81-36581049f603" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
