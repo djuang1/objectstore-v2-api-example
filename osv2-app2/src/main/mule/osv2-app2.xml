@@ -33,7 +33,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	grant_type : "client_credentials"
 }]]]></http:body>
 		</http:request>
-		<http:request method="GET" doc:name="Request" doc:id="c3e5d9c0-880f-4a41-abb2-052e3aa63ec0" config-ref="OSV2_HTTPS_Request_configuration" path="#[&quot;/api/v1/organizations/&quot; ++ p('org_id') ++ &quot;/environments/&quot; ++ p('env_id') ++ &quot;/stores/APP_osv2-app1__defaultPersistentObjectStore/partitions/_defaultPartition/keys/&quot; ++ attributes.queryParams.key]">
+		<http:request method="GET" doc:name="Request" doc:id="c3e5d9c0-880f-4a41-abb2-052e3aa63ec0" config-ref="OSV2_HTTPS_Request_configuration" path="#[&quot;/api/v1/organizations/&quot; ++ p('org_id') ++ &quot;/environments/&quot; ++ p('env_id') ++ &quot;/stores/&quot; ++ p('osv2.store') ++&quot;/partitions/_defaultPartition/keys/&quot; ++ attributes.queryParams.key]">
 			<http:headers><![CDATA[#[output application/java
 ---
 {
@@ -73,7 +73,7 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<http:request method="PUT" doc:name="Request" doc:id="b5ab1074-3fd0-4718-be99-bfb9c285032e" config-ref="OSV2_HTTPS_Request_configuration" path="#[&quot;/api/v1/organizations/&quot; ++ p('org_id') ++ &quot;/environments/&quot; ++ p('env_id') ++ &quot;/stores/APP_osv2-app1__defaultPersistentObjectStore/partitions/_defaultPartition/keys/2&quot;]">
+		<http:request method="PUT" doc:name="Request" doc:id="b5ab1074-3fd0-4718-be99-bfb9c285032e" config-ref="OSV2_HTTPS_Request_configuration" path="#[&quot;/api/v1/organizations/&quot; ++ p('org_id') ++ &quot;/environments/&quot; ++ p('env_id') ++ &quot;/stores/&quot; ++ p('osv2.store') ++&quot;/partitions/_defaultPartition/keys/2&quot;]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -106,7 +106,7 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<http:request method="PUT" doc:name="Request" doc:id="1fe0ca24-a41d-4a34-b8d0-2b1a5a632fcf" config-ref="OSV2_HTTPS_Request_configuration" path="#[&quot;/api/v1/organizations/&quot; ++ p('org_id') ++ &quot;/environments/&quot; ++ p('env_id') ++ &quot;/stores/APP_osv2-app1__defaultPersistentObjectStore/partitions/_defaultPartition/keys/3&quot;]">
+		<http:request method="PUT" doc:name="Request" doc:id="1fe0ca24-a41d-4a34-b8d0-2b1a5a632fcf" config-ref="OSV2_HTTPS_Request_configuration" path="#[&quot;/api/v1/organizations/&quot; ++ p('org_id') ++ &quot;/environments/&quot; ++ p('env_id') ++ &quot;/stores/&quot; ++ p('osv2.store') ++&quot;/partitions/_defaultPartition/keys/3&quot;]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -114,4 +114,30 @@ output application/json
 }]]]></http:headers>
 		</http:request>
 	</flow>
+	<flow name="osv2-app2Flow" doc:id="dfc5ec10-d38c-4522-95dd-675a79a7e015" >
+		<http:listener doc:name="/getstores" doc:id="c136cb8b-0b9b-4dda-b76e-150ba35cfea2" config-ref="HTTP_Listener_config" path="/getstores"/>
+		<http:request method="POST" doc:name="Request" doc:id="cb109c90-331f-4a46-a950-34c83f05508d" config-ref="HTTP_Request_configuration" path="/accounts/oauth2/token" target="access_token" targetValue="#[payload.access_token]">
+			<http:body><![CDATA[#[output application/x-www-form-urlencoded 
+--- 
+{	
+	client_id : p('osv2.client_id'), 	
+	client_secret : p('osv2.client_secret'),	
+	grant_type : "client_credentials"
+}]]]></http:body>
+		</http:request>
+		<http:request method="GET" doc:name="Stores" doc:id="e1c070fb-b329-4e32-b642-db8145788e00" config-ref="OSV2_HTTPS_Request_configuration" path="#[&quot;/api/v1/organizations/&quot; ++ p('org_id') ++ &quot;/environments/&quot; ++ p('env_id') ++ &quot;/stores&quot;]">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "bearer " ++ vars.access_token
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="5e2601b6-a708-4678-aa39-578d04c0e28a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform></flow>
 </mule>

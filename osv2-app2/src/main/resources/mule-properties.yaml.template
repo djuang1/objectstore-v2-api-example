@@ -2,6 +2,7 @@ osv2:
   base_url: ""
   client_id: ""
   client_secret: ""
+  store: ""
 org_id: ""
 env_id: ""
 
